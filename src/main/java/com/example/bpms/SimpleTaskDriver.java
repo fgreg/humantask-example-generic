@@ -147,14 +147,9 @@ public class SimpleTaskDriver {
 		
 		RuntimeEngine runtimeEngine = manager.getRuntimeEngine(EmptyContext.get());
 		
-		final SupplyItem item1 = new SupplyItem();
-		item1.setDescription("Red Shoes");
-		final SupplyItem item2 = new SupplyItem();
-		item2.setDescription("Red Hat");
 		
 //		Doesn't work
 		ExecutorService exec = Executors.newCachedThreadPool();
-		
 		
 		exec.submit(new Runnable(){
 			@Override
@@ -163,6 +158,8 @@ public class SimpleTaskDriver {
 				RuntimeEngine runtimeEngine = manager.getRuntimeEngine(CorrelationKeyContext.get());
 				KieSession ksession = runtimeEngine.getKieSession();
 				Map<String, Object> params = new HashMap<>();
+				SupplyItem item1 = new SupplyItem();
+				item1.setDescription("Red Shoes");
 				params.put("supplyItem", item1);
 				ProcessInstance proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
 				
@@ -178,6 +175,8 @@ public class SimpleTaskDriver {
 				RuntimeEngine runtimeEngine = manager.getRuntimeEngine(CorrelationKeyContext.get());
 				KieSession ksession = runtimeEngine.getKieSession();
 				Map<String, Object> params = new HashMap<>();
+				SupplyItem item2 = new SupplyItem();
+				item2.setDescription("Red Hat");
 				params.put("supplyItem", item2);
 				ProcessInstance proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
 				
@@ -243,6 +242,7 @@ public class SimpleTaskDriver {
         manager.close();
 	}
 	
+	
 	public ProcessInstance startSubmittask(SupplyItem item, RuntimeEngine runtimeEngine) {
 		KieSession ksession = runtimeEngine.getKieSession();
 		Map<String, Object> params = new HashMap<>();
@@ -254,6 +254,5 @@ public class SimpleTaskDriver {
 
 		return proc;
 	}
-	
 	
 }

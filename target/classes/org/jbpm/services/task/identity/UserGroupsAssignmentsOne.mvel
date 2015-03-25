@@ -1,6 +1,0 @@
-usersgroups = [ 
-                new User('bob') : [new Group( "supplyItemApprovers" )],
-                new User('john') : [new Group( "Accounting" ), new Group("kiemgmt")],
-                new User('Administrator') : [new Group( "Administrators" )]
-              ];       
-return usersgroups;
