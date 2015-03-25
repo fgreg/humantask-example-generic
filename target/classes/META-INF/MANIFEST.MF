@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Build-Timestamp: 
+Implementation-Title: humantask-example
+Implementation-Version: 0.0.1-SNAPSHOT
+Os-Version: 10.10.2
+Built-By: Frank
+Specification-Vendor: JBoss by Red Hat
+Created-By: Maven Integration for Eclipse
+Os-Name: Mac OS X
+Implementation-URL: http://www.jboss.org/jboss-integration-platform-pa
+ rent/ip-parent/humantask-example
+Java-Vendor: Apple Inc.
+Implementation-Vendor: JBoss by Red Hat
+Scm-Revision: 
+Implementation-Vendor-Id: com.example
+Scm-Url: http://github.com/jboss/jboss-parent-pom/jboss-integration-pl
+ atform-parent/ip-parent/humantask-example
+Java-Version: 1.6.0_65
+Build-Jdk: 1.6.0_65
+Scm-Connection: scm:git:git@github.com:jboss/jboss-parent-pom.git/jbos
+ s-integration-platform-parent/ip-parent/humantask-example
+Os-Arch: x86_64
+Specification-Title: humantask-example
+Specification-Version: 0.0.1-SNAPSHOT
+
