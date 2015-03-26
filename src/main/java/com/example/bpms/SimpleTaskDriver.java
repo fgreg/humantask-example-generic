@@ -147,6 +147,16 @@ public class SimpleTaskDriver {
 		
 		RuntimeEngine runtimeEngine = manager.getRuntimeEngine(EmptyContext.get());
 		
+	
+		KieSession ksession = runtimeEngine.getKieSession();
+		Map<String, Object> params = new HashMap<>();
+		SupplyItem item1 = new SupplyItem();
+		item1.setDescription("Red Shoes");
+		params.put("supplyItem", item1);
+		ProcessInstance proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
+		
+		ksession.abortProcessInstance(proc.getId());
+		
 		
 //		Doesn't work
 		ExecutorService exec = Executors.newCachedThreadPool();
