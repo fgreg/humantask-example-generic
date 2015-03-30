@@ -14,7 +14,7 @@
     <bpmn2:startEvent id="StartEvent_1" name="StartProcess">
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:userTask id="UserTask_1" name="User Task 1">
+    <bpmn2:userTask id="UserTask_1" name="Item Approval">
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
       <bpmn2:ioSpecification id="InputOutputSpecification_2">
@@ -80,7 +80,7 @@
       </bpmn2:dataOutputAssociation>
     </bpmn2:userTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1" tns:priority="1" sourceRef="StartEvent_1" targetRef="UserTask_1"/>
-    <bpmn2:exclusiveGateway id="ExclusiveGateway_1" name="Exclusive Gateway 1" gatewayDirection="Diverging">
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_1" name="Check Approved" gatewayDirection="Diverging">
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
       <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
@@ -95,7 +95,7 @@
     <bpmn2:scriptTask id="ScriptTask_1" name="Approved" scriptFormat="http://www.java.com/java">
       <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
-      <bpmn2:script>System.out.println(&quot;Approved item: &quot; + supplyItem.getDescription());</bpmn2:script>
+      <bpmn2:script>System.out.println(&quot;Approved item: &quot; + supplyItem);</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_5" tns:priority="1" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_1">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_27" language="http://www.mvel.org/2.0">itemApproved == true</bpmn2:conditionExpression>
@@ -104,7 +104,7 @@
     <bpmn2:scriptTask id="ScriptTask_2" name="Rejected" scriptFormat="http://www.java.com/java">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
-      <bpmn2:script>System.out.println(&quot;Rejected item: &quot; + supplyItem.getDescription());</bpmn2:script>
+      <bpmn2:script>System.out.println(&quot;Rejected item: &quot; + supplyItem);</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_7" tns:priority="1" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_2">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_28" language="http://www.mvel.org/2.0">itemApproved == false</bpmn2:conditionExpression>
@@ -122,13 +122,13 @@
       <bpmndi:BPMNShape id="BPMNShape_UserTask_1" bpmnElement="UserTask_1">
         <dc:Bounds height="50.0" width="110.0" x="200.0" y="45.0"/>
         <bpmndi:BPMNLabel id="BPMNLabel_2" labelStyle="BPMNLabelStyle_1">
-          <dc:Bounds height="10.0" width="50.0" x="230.0" y="65.0"/>
+          <dc:Bounds height="10.0" width="57.0" x="226.0" y="65.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_ExclusiveGateway_1" bpmnElement="ExclusiveGateway_1" isMarkerVisible="true">
         <dc:Bounds height="50.0" width="50.0" x="380.0" y="45.0"/>
         <bpmndi:BPMNLabel id="BPMNLabel_3" labelStyle="BPMNLabelStyle_1">
-          <dc:Bounds height="20.0" width="44.0" x="383.0" y="95.0"/>
+          <dc:Bounds height="10.0" width="68.0" x="371.0" y="95.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="EndEvent_1">

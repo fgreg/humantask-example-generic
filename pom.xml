@@ -40,6 +40,11 @@
 				<version>6.0.0.CR6-redhat-13</version>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.kie</groupId>
+				<artifactId>kie-api</artifactId>
+				<version>6.0.3-redhat-6</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -104,8 +109,8 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>dom4j</groupId>
@@ -123,8 +128,6 @@
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
 		</dependency>
-
-
 
 	</dependencies>
 

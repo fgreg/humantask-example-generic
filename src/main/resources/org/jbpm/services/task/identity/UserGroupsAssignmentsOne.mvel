@@ -1,6 +1,8 @@
 usersgroups = [ 
                 new User('bob') : [new Group( "supplyItemApprovers" )],
-                new User('john') : [new Group( "Accounting" ), new Group("kiemgmt")],
+                new User('john') : [new Group( "supplyItemApprovers" )],
+                new User('sally') : [new Group( "submitters" )],
+                new User('debbie') : [new Group( "Administrators" )],
                 new User('Administrator') : [new Group( "Administrators" )]
               ];       
 return usersgroups;
