@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 
 import org.jbpm.process.audit.AuditLoggerFactory;
 import org.jbpm.process.audit.AuditLoggerFactory.Type;
+import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
@@ -52,7 +53,13 @@ public class SendBatchItemForProcessing implements Callable<Long> {
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("supplyItem", item);
-		ProcessInstance proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
+		ProcessInstance proc;
+		try{
+			proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
+		}catch(WorkflowRuntimeException e){
+			//Retry once. Starting a process could result in transient error when new users are added to the system.
+			proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
+		}
 		
 		System.out.println("Started process: " + proc );
 		

@@ -1,16 +1,10 @@
 package com.example.bpms.examples;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.kie.api.runtime.KieSession;
-import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
-import org.kie.api.runtime.process.ProcessInstance;
-import org.kie.internal.runtime.manager.context.EmptyContext;
 
 import com.example.bpms.EnvironmentManager;
 import com.example.bpms.SupplyItem;
@@ -42,8 +36,6 @@ public class AsynchonousProcessSubmission {
 	}
 	
 	public void startSimulation(final RuntimeManager manager){
-		
-//		initDbTables(manager);
 		
 		SupplyItem item1 = new SupplyItem();
 		item1.setDescription("Red Shoes");
@@ -80,21 +72,6 @@ public class AsynchonousProcessSubmission {
 			e.printStackTrace();
 		}
         
-	}
-	
-	
-	//This is only necessary because we are using Hibernate to generate the schema asynchrounously.
-	private void initDbTables(RuntimeManager manager) {
-		RuntimeEngine runtimeEngine = manager.getRuntimeEngine(EmptyContext.get());
-		KieSession ksession = runtimeEngine.getKieSession();
-		Map<String, Object> params = new HashMap<>();
-		SupplyItem item1 = new SupplyItem();
-		item1.setDescription("Red Shoes");
-		params.put("supplyItem", item1);
-		ProcessInstance proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
-
-		ksession.abortProcessInstance(proc.getId());
-		manager.disposeRuntimeEngine(runtimeEngine);
 	}
 	
 }
