@@ -9,13 +9,13 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import org.jbpm.process.audit.NodeInstanceLog;
-import org.jbpm.process.audit.ProcessInstanceLog;
 import org.jbpm.process.audit.VariableInstanceLog;
 import org.jbpm.process.audit.strategy.PersistenceStrategy;
 import org.jbpm.process.audit.strategy.PersistenceStrategyType;
 import org.jbpm.process.audit.strategy.StandaloneJtaStrategy;
 import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.EnvironmentName;
+import org.kie.api.runtime.manager.audit.ProcessInstanceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,15 +25,15 @@ import org.slf4j.LoggerFactory;
  * @author Frank
  *
  */
-public class JPACustomAuditLogService implements CustomAuditLogService  {
+public class JPACustomAuditService implements CustomAuditService  {
 	
-private static final Logger logger = LoggerFactory.getLogger(JPACustomAuditLogService.class);
+private static final Logger logger = LoggerFactory.getLogger(JPACustomAuditService.class);
     
     private PersistenceStrategy persistenceStrategy;
     
     private String persistenceUnitName = "org.jbpm.persistence.jpa";
     
-    public JPACustomAuditLogService() {
+    public JPACustomAuditService() {
         EntityManagerFactory emf = null;
         try { 
            emf = Persistence.createEntityManagerFactory(persistenceUnitName); 
@@ -45,11 +45,11 @@ private static final Logger logger = LoggerFactory.getLogger(JPACustomAuditLogSe
         }
     }
     
-    public JPACustomAuditLogService(Environment env, PersistenceStrategyType type) {
+    public JPACustomAuditService(Environment env, PersistenceStrategyType type) {
         persistenceStrategy = PersistenceStrategyType.getPersistenceStrategy(type, env);
     }
     
-    public JPACustomAuditLogService(Environment env) {
+    public JPACustomAuditService(Environment env) {
         EntityManagerFactory emf = (EntityManagerFactory) env.get(EnvironmentName.ENTITY_MANAGER_FACTORY);
         if( emf != null ) { 
             persistenceStrategy = new StandaloneJtaStrategy(emf);
@@ -58,11 +58,11 @@ private static final Logger logger = LoggerFactory.getLogger(JPACustomAuditLogSe
         } 
     }
     
-    public JPACustomAuditLogService(EntityManagerFactory emf){
+    public JPACustomAuditService(EntityManagerFactory emf){
         persistenceStrategy = new StandaloneJtaStrategy(emf);
     }
     
-    public JPACustomAuditLogService(EntityManagerFactory emf, PersistenceStrategyType type){
+    public JPACustomAuditService(EntityManagerFactory emf, PersistenceStrategyType type){
         persistenceStrategy = PersistenceStrategyType.getPersistenceStrategy(type, emf);
     }
     

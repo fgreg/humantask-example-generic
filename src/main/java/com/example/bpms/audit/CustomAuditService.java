@@ -2,10 +2,10 @@ package com.example.bpms.audit;
 
 import java.util.List;
 
-import org.jbpm.process.audit.AuditLogService;
-import org.jbpm.process.audit.ProcessInstanceLog;
+import org.kie.api.runtime.manager.audit.AuditService;
+import org.kie.api.runtime.manager.audit.ProcessInstanceLog;
 
-public interface CustomAuditLogService extends AuditLogService {
+public interface CustomAuditService extends AuditService {
 
 	/**
 	 * Get all ProcessInstanceLog for the given process instance id.

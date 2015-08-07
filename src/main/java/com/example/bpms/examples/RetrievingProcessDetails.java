@@ -5,9 +5,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.jbpm.process.audit.NodeInstanceLog;
-import org.jbpm.process.audit.ProcessInstanceLog;
 import org.kie.api.runtime.manager.RuntimeManager;
+import org.kie.api.runtime.manager.audit.NodeInstanceLog;
+import org.kie.api.runtime.manager.audit.ProcessInstanceLog;
 
 import com.example.bpms.Batch;
 import com.example.bpms.EnvironmentManager;
@@ -15,7 +15,7 @@ import com.example.bpms.SupplyItem;
 import com.example.bpms.async.ApproverBob;
 import com.example.bpms.async.ApproverJohn;
 import com.example.bpms.async.SubmitterSally;
-import com.example.bpms.audit.CustomAuditLogService;
+import com.example.bpms.audit.CustomAuditService;
 import com.example.bpms.repository.BatchRepository;
 import com.example.bpms.repository.MapBatchRepository;
 
@@ -45,7 +45,7 @@ public class RetrievingProcessDetails {
 	}
 	
 	private BatchRepository batchRepo;
-	private CustomAuditLogService auditService;
+	private CustomAuditService auditService;
 	
 	
 	public RetrievingProcessDetails setBatchRepository(BatchRepository batchRepo){
@@ -53,7 +53,7 @@ public class RetrievingProcessDetails {
 		return this;
 	}
 	
-	public RetrievingProcessDetails setAuditLogService(CustomAuditLogService auditService){
+	public RetrievingProcessDetails setAuditLogService(CustomAuditService auditService){
 		this.auditService = auditService;
 		return this;
 	}
@@ -95,13 +95,13 @@ public class RetrievingProcessDetails {
 			System.out.println("### Batch " + b.getBatchId() + " ###");
 			for(Long procId : b.getProcessInstanceIds()){
 				ProcessInstanceLog proc = auditService.findByProcessInstanceId(procId).get(0);
-				System.out.println( "\tProcess id: " + proc.getId()
+				System.out.println( "\tProcess id: " + proc.getProcessId()
 						+ "\n\t\t" + "Process Name: " + proc.getProcessName()
 						+ "\n\t\t" + "Process Start: " +  proc.getStart()
 						+ "\n\t\t" + "Process End: " + proc.getEnd()
 						+ "\n\t\t" + "Process Status: " +  proc.getStatus()
 				);
-				List<NodeInstanceLog> nodes = auditService.findNodeInstances(procId);
+				List<? extends NodeInstanceLog> nodes = auditService.findNodeInstances(procId);
 				for(NodeInstanceLog node : nodes){
 					System.out.println("Node " + node.toString() + "{{WI}} " + node.getWorkItemId());
 				}
@@ -129,7 +129,7 @@ public class RetrievingProcessDetails {
 			System.out.println("### Batch " + b.getBatchId() + " ###");
 			for(Long procId : b.getProcessInstanceIds()){
 				ProcessInstanceLog proc = auditService.findByProcessInstanceId(procId).get(0);
-				System.out.println( "\tProcess id: " + proc.getId()
+				System.out.println( "\tProcess id: " + proc.getProcessId()
 						+ "\n\t\t" + "Process Name: " + proc.getProcessName()
 						+ "\n\t\t" + "Process Start: " +  proc.getStart()
 						+ "\n\t\t" + "Process End: " + proc.getEnd()

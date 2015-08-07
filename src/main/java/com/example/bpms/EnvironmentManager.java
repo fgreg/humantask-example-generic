@@ -11,8 +11,8 @@ import javax.transaction.SystemException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.h2.tools.Server;
-import org.jbpm.services.task.audit.lifecycle.listeners.BAMTaskEventListener;
 import org.jbpm.services.task.identity.MvelUserGroupCallbackImpl;
+import org.jbpm.services.task.lifecycle.listeners.BAMTaskEventListener;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.manager.RuntimeEnvironment;
 import org.kie.api.runtime.manager.RuntimeEnvironmentBuilder;
@@ -25,8 +25,8 @@ import bitronix.tm.BitronixTransactionManager;
 import bitronix.tm.TransactionManagerServices;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
 
-import com.example.bpms.audit.JPACustomAuditLogService;
-import com.example.bpms.audit.CustomAuditLogService;
+import com.example.bpms.audit.CustomAuditService;
+import com.example.bpms.audit.JPACustomAuditService;
 import com.example.camel.CamelWorkItemHandler;
 import com.example.camel.NotificationRoute;
 import com.example.camel.SupplyItemRoute;
@@ -90,9 +90,9 @@ public class EnvironmentManager {
 	 * 
 	 * @return The audit log service.
 	 */
-	public CustomAuditLogService getAuditLogService(){
-		CustomAuditLogService auditLogService = new JPACustomAuditLogService(emf);
-		((JPACustomAuditLogService) auditLogService).setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
+	public CustomAuditService getAuditLogService(){
+		CustomAuditService auditLogService = new JPACustomAuditService(emf);
+		((JPACustomAuditService) auditLogService).setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
 		return auditLogService;
 	}
 	
