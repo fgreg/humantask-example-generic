@@ -14,7 +14,7 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.runtime.process.ProcessInstance;
-import org.kie.internal.runtime.manager.context.EmptyContext;
+import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 
 import com.example.bpms.Batch;
 import com.example.bpms.SupplyItem;
@@ -63,7 +63,7 @@ public class SubmitterSally implements Callable<Long> {
 	}
 	
 	private ProcessInstance startProcess(SupplyItem item){
-		RuntimeEngine runtimeEngine = manager.getRuntimeEngine(EmptyContext.get());
+		RuntimeEngine runtimeEngine = manager.getRuntimeEngine(ProcessInstanceIdContext.get());
 		KieSession ksession = runtimeEngine.getKieSession();
 		
 		//Turn on Auditing

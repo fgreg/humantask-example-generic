@@ -113,7 +113,8 @@
     <bpmn2:scriptTask id="ScriptTask_1" name="Approved" scriptFormat="http://www.java.com/java">
       <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
-      <bpmn2:script>System.out.println(approver + &quot; approved item: &quot; + supplyItem);</bpmn2:script>
+      <bpmn2:script>//System.out.println(approver + &quot; approved item: &quot; + supplyItem);
+int x = 0;</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_5" tns:priority="1" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_1">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_27" language="http://www.mvel.org/2.0">itemApproved == true</bpmn2:conditionExpression>
@@ -121,7 +122,8 @@
     <bpmn2:scriptTask id="ScriptTask_2" name="Rejected" scriptFormat="http://www.java.com/java">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
-      <bpmn2:script>System.out.println(approver + &quot; rejected item: &quot; + supplyItem);</bpmn2:script>
+      <bpmn2:script>//System.out.println(approver + &quot; rejected item: &quot; + supplyItem);
+int x = 0;</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_7" tns:priority="1" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_2">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="FormalExpression_28" language="http://www.mvel.org/2.0">itemApproved == false</bpmn2:conditionExpression>

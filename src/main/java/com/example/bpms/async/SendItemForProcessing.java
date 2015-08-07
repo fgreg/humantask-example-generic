@@ -9,7 +9,7 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.runtime.process.ProcessInstance;
-import org.kie.internal.runtime.manager.context.EmptyContext;
+import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 
 import com.example.bpms.SupplyItem;
 
@@ -37,7 +37,7 @@ public class SendItemForProcessing implements Callable<ProcessInstance> {
 	@Override
 	public ProcessInstance call() throws Exception {
 		
-		RuntimeEngine runtimeEngine = manager.getRuntimeEngine(EmptyContext.get());
+		RuntimeEngine runtimeEngine = manager.getRuntimeEngine(ProcessInstanceIdContext.get());
 		KieSession ksession = runtimeEngine.getKieSession();
 		
 		Map<String, Object> params = new HashMap<>();
@@ -49,10 +49,10 @@ public class SendItemForProcessing implements Callable<ProcessInstance> {
 		}catch(WorkflowRuntimeException e){
 			//Retry once. Starting a process could result in transient error when new users are added to the system.
 			//https://bugzilla.redhat.com/show_bug.cgi?id=1208056
-			proc = ksession.startProcess("com.walmart.bpms.simplesupplyitemapproval", params);
+			proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
 		}
 		
-		System.out.println("Started process:" + proc);
+//		System.out.println("Started process:" + proc);
 		
 		manager.disposeRuntimeEngine(runtimeEngine);
 		

@@ -7,7 +7,7 @@ import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.task.TaskService;
 import org.kie.api.task.model.TaskSummary;
-import org.kie.internal.runtime.manager.context.EmptyContext;
+import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 
 import com.example.bpms.SupplyItem;
 
@@ -20,15 +20,21 @@ import com.example.bpms.SupplyItem;
 public class ApproverJohn implements Runnable{
 
 	private RuntimeManager manager;
+	private boolean silence;
 	
 	public ApproverJohn(RuntimeManager manager){
+		this(manager, false);
+	}
+	
+	public ApproverJohn(RuntimeManager manager, boolean silence){
 		this.manager = manager;
+		this.silence = silence;
 	}
 	
 	@Override
 	public void run() {
 		
-		RuntimeEngine runtimeEngine = manager.getRuntimeEngine(EmptyContext.get());
+		RuntimeEngine runtimeEngine = manager.getRuntimeEngine(ProcessInstanceIdContext.get());
 		TaskService taskService = runtimeEngine.getTaskService();
 		
         // John always rejects Red Hats
@@ -37,13 +43,13 @@ public class ApproverJohn implements Runnable{
             for (TaskSummary taskSummary : list) {
             	try{
             		taskService.claim(taskSummary.getId(), "john");
-	                System.out.println("john claims a task : taskId = " + taskSummary.getId());
+	                print("john claims a task : taskId = " + taskSummary.getId());
             	}catch(Throwable ex){
-            		System.out.println("john could not claim task : taskId = " + taskSummary.getId());
+            		print("john could not claim task : taskId = " + taskSummary.getId());
             		continue;
             	}
             	taskService.start(taskSummary.getId(), "john");
-                System.out.println("john starts a task : taskId = " + taskSummary.getId());
+            	print("john starts a task : taskId = " + taskSummary.getId());
                 Map<String,Object> content = taskService.getTaskContent(taskSummary.getId());
                 SupplyItem taskItem = (SupplyItem) content.get("supplyItemInput");
                 if(taskItem.getDescription().equals("Red Hat")){
@@ -57,6 +63,12 @@ public class ApproverJohn implements Runnable{
         
         manager.disposeRuntimeEngine(runtimeEngine);
         
+	}
+	
+	private void print(String message){
+		if(!silence){
+			System.out.println(message);
+		}
 	}
 	
 	public static boolean isCause(Class<? extends Throwable> expected, Throwable exc) {
