@@ -32,15 +32,17 @@ public class SupplyItem implements Serializable{
 	public long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public SupplyItem setId(long id) {
 		this.id = id;
+		return this;
 	}
 	
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) {
+	public SupplyItem setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 	
 	public static long nextId(){

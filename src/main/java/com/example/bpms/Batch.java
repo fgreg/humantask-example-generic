@@ -1,5 +1,7 @@
 package com.example.bpms;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -14,15 +16,20 @@ public class Batch {
 
 	private String userId;
 	private long batchId;
-	private long procId;
+	private List<Long> processInstanceIds = new ArrayList<>();
 	
-	public long getProcId() {
-		return procId;
+	public List<Long> getProcessInstanceIds() {
+		return new ArrayList<Long>(processInstanceIds);
 	}
-	public Batch setProcId(long procId) {
-		this.procId = procId;
+	public Batch setProcessInstanceIds(List<Long> processInstanceIds) {
+		this.processInstanceIds = new ArrayList<Long>(processInstanceIds);
 		return this;
 	}
+	public Batch addProcessInstanceId(long processInstanceId) {
+		this.processInstanceIds.add(processInstanceId);
+		return this;
+	}
+	
 	public long getBatchId() {
 		return batchId;
 	}

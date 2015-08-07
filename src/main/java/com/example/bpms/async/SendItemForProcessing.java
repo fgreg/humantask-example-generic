@@ -48,7 +48,8 @@ public class SendItemForProcessing implements Callable<ProcessInstance> {
 			proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
 		}catch(WorkflowRuntimeException e){
 			//Retry once. Starting a process could result in transient error when new users are added to the system.
-			proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
+			//https://bugzilla.redhat.com/show_bug.cgi?id=1208056
+			proc = ksession.startProcess("com.walmart.bpms.simplesupplyitemapproval", params);
 		}
 		
 		System.out.println("Started process:" + proc);

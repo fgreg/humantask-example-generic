@@ -13,7 +13,7 @@ import com.example.bpms.EnvironmentManager;
 import com.example.bpms.SupplyItem;
 import com.example.bpms.async.ApproverBob;
 import com.example.bpms.async.ApproverJohn;
-import com.example.bpms.async.SendBatchItemForProcessing;
+import com.example.bpms.async.SubmitterSally;
 import com.example.bpms.audit.CustomAuditLogService;
 import com.example.bpms.repository.BatchRepository;
 import com.example.bpms.repository.MapBatchRepository;
@@ -59,19 +59,24 @@ public class RetrievingProcessDetails {
 	
 	public void startSimulation(final RuntimeManager manager){
 		
-		SupplyItem item1 = new SupplyItem();
-		item1.setDescription("Red Shoes");
-		SupplyItem item2 = new SupplyItem();
-		item2.setDescription("Red Hat");
-		
 		//Asynchronously submit two items for approval. This is simulating what would happen
 		//when supply items are being received via a RESTful Endpoint.
 		
-		//We are going to submit two 'batches'. Each batch will have 1 item.
+		//We are going to submit three 'batches'. Each batch will have 1 item except the last.
 		ExecutorService exec = Executors.newCachedThreadPool();
 		
-		exec.submit(new SendBatchItemForProcessing(batchRepo, true, item1, manager));
-		exec.submit(new SendBatchItemForProcessing(batchRepo, true, item2, manager));
+		exec.submit(new SubmitterSally(batchRepo, true, manager, new SupplyItem().setDescription("Red Shoes")));
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e1) {}
+		exec.submit(new SubmitterSally(batchRepo, true, manager, new SupplyItem().setDescription("Red Hat")));
+		exec.submit(new SubmitterSally(batchRepo, true, manager, new SupplyItem[]{ 
+				new SupplyItem().setDescription("Rose Hat")
+			,	new SupplyItem().setDescription("Maroon Hat")
+			,	new SupplyItem().setDescription("Mauve Hat")
+			,	new SupplyItem().setDescription("Cherry Hat")
+			,	new SupplyItem().setDescription("Scarlet Hat")
+		}));
 		
 		exec.shutdown();
 		try {
@@ -80,25 +85,26 @@ public class RetrievingProcessDetails {
 			e.printStackTrace();
 		}
 		
-		//Two processes have been submitted and are now running.
+		//Processes have been submitted and are now running.
 		//Get all the batches sally has submitted
 		List<Batch> sallysBatches = batchRepo.findByUserId("sally");
 		
 		//Look up the process status for those batches
 		for(Batch b : sallysBatches){
-			ProcessInstanceLog proc = auditService.findByProcessInstanceId(b.getProcId()).get(0);
-			System.out.println( "Process id: " + proc.getId()
-					+ "\n\t" + "Process Name: " + proc.getProcessName()
-					+ "\n\t" + "Process Start: " +  proc.getStart()
-					+ "\n\t" + "Process End: " + proc.getEnd()
-					+ "\n\t" + "Process Status: " +  proc.getStatus()
-			);
+			System.out.println("### Batch " + b.getBatchId() + " ###");
+			for(Long procId : b.getProcessInstanceIds()){
+				ProcessInstanceLog proc = auditService.findByProcessInstanceId(procId).get(0);
+				System.out.println( "\tProcess id: " + proc.getId()
+						+ "\n\t\t" + "Process Name: " + proc.getProcessName()
+						+ "\n\t\t" + "Process Start: " +  proc.getStart()
+						+ "\n\t\t" + "Process End: " + proc.getEnd()
+						+ "\n\t\t" + "Process Status: " +  proc.getStatus()
+				);
+			}
 		}
 		
 		
-		//Now that Two supply items have been submitted, simulate two different users trying to approve
-		//or reject the tasks.
-		
+		//Now simulate two different users trying to approve or reject the tasks.
 		exec = Executors.newCachedThreadPool();
 		
 		exec.submit(new ApproverBob(manager));
@@ -115,13 +121,16 @@ public class RetrievingProcessDetails {
 		//The processes should now be complete
 		//Look up the process status for those batches
 		for(Batch b : sallysBatches){
-			ProcessInstanceLog proc = auditService.findByProcessInstanceId(b.getProcId()).get(0);
-			System.out.println( "Process id: " + proc.getId()
-					+ "\n\t" + "Process Name: " + proc.getProcessName()
-					+ "\n\t" + "Process Start: " +  proc.getStart()
-					+ "\n\t" + "Process End: " + proc.getEnd()
-					+ "\n\t" + "Process Status: " +  proc.getStatus()
-			);
+			System.out.println("### Batch " + b.getBatchId() + " ###");
+			for(Long procId : b.getProcessInstanceIds()){
+				ProcessInstanceLog proc = auditService.findByProcessInstanceId(procId).get(0);
+				System.out.println( "\tProcess id: " + proc.getId()
+						+ "\n\t\t" + "Process Name: " + proc.getProcessName()
+						+ "\n\t\t" + "Process Start: " +  proc.getStart()
+						+ "\n\t\t" + "Process End: " + proc.getEnd()
+						+ "\n\t\t" + "Process Status: " +  proc.getStatus()
+				);
+			}
 		}
         
 	}

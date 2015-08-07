@@ -8,6 +8,7 @@ import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.task.TaskService;
+import org.kie.api.task.model.Status;
 import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
@@ -56,16 +57,32 @@ public class DelegatingTasks {
 		
         // Simulate a user claiming a task
 		TaskSummary ts = taskService.getTasksAssignedAsPotentialOwner("bob", "en-UK").get(0);
-//		taskService.claim(ts.getId(), "bob");
+		taskService.claim(ts.getId(), "bob");
 		
 		//Bob has claimed a task but then left for a two week vacation. Debbie now
 		//delegates his task to John.
-		System.out.println(taskService.getTaskById(ts.getId()).getPeopleAssignments().getBusinessAdministrators());
-		System.out.println(taskService.getTasksAssignedAsBusinessAdministrator("debbie", "en-UK"));
-		System.out.println(taskService.getTasksAssignedAsBusinessAdministrator("Administrators", "en-UK"));
-        
+		for(TaskSummary summary : taskService.getTasksAssignedAsBusinessAdministrator("Administrators", "en-UK")){
+			Status taskStatus = summary.getStatus();
+			switch(taskStatus){
+				case Reserved:
+					taskService.delegate(summary.getId(), "debbie", "john");
+					System.out.println("Debbie delegated task " + summary.getId() + " to John");
+					break;
+				default:
+					break;
+			}
+		}
+		
+		//Now john has a task assigned explicitly to him so he is THE owner
+		for(TaskSummary summary : taskService.getTasksOwned("john", "en-UK")){
+			System.out.println("John is the owner of task " + summary.getId());
+		}
+		
+		//john is also the potential owner of both tasks
+		for(TaskSummary summary : taskService.getTasksAssignedAsPotentialOwner("john", "en-UK")){
+			System.out.println("John is the potential owner of task " + summary.getId());
+		}
 
-        // -----------
         manager.disposeRuntimeEngine(runtimeEngine);
 	}
 	

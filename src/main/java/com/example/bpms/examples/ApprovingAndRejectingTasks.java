@@ -68,10 +68,11 @@ public class ApprovingAndRejectingTasks {
                 System.out.println("bob starts a task : taskId = " + taskSummary.getId());
                 taskService.start(taskSummary.getId(), "bob");
                 System.out.println(taskService.getTaskById(taskSummary.getId()).getPeopleAssignments().getPotentialOwners());
-                Map<String,Object> content = getTaskContent(taskService, taskSummary.getId());
-//                Map<String,Object> content = taskService.getTaskContent(taskSummary.getId());
+                Map<String,Object> content = taskService.getTaskContent(taskSummary.getId());
                 System.out.println(content);
                 SupplyItem taskItem = (SupplyItem) content.get("supplyItemInput");
+                
+                
                 if(taskItem.getDescription().equals("Red Hat")){
                 	content.put("approved", true);
                 }else{

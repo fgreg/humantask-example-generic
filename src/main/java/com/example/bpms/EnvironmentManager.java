@@ -9,6 +9,8 @@ import javax.persistence.Persistence;
 import javax.transaction.SystemException;
 
 import org.h2.tools.Server;
+import org.jbpm.runtime.manager.impl.DefaultRegisterableItemsFactory;
+import org.jbpm.services.task.audit.lifecycle.listeners.BAMTaskEventListener;
 import org.jbpm.services.task.identity.MvelUserGroupCallbackImpl;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.manager.RuntimeEnvironment;
@@ -180,7 +182,14 @@ public class EnvironmentManager {
 
 		RuntimeEnvironmentBuilder builder = RuntimeEnvironmentBuilder.Factory.get().newDefaultBuilder();
 
-		builder.persistence(true).entityManagerFactory(emf).userGroupCallback(setupUserGroups());
+		//Turn on task listener
+		DefaultRegisterableItemsFactory registerableItemsFactory = new DefaultRegisterableItemsFactory();
+	    registerableItemsFactory.addTaskListener(BAMTaskEventListener.class);
+
+		builder.persistence(true)
+			.entityManagerFactory(emf)
+			.userGroupCallback(setupUserGroups())
+			.registerableItemsFactory(registerableItemsFactory);
 		for (String resource : resources) {
 			builder.addAsset(ResourceFactory.newClassPathResource(resource), ResourceType.determineResourceType(resource));
 		}

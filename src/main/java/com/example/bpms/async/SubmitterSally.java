@@ -1,6 +1,9 @@
 package com.example.bpms.async;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -23,19 +26,19 @@ import com.example.bpms.repository.BatchRepository;
  * @author Frank
  *
  */
-public class SendBatchItemForProcessing implements Callable<Long> {
+public class SubmitterSally implements Callable<Long> {
 
-	private final SupplyItem item;
+	private final List<SupplyItem> items;
 	private final RuntimeManager manager;
 	private final boolean processAuditing;
 	private final BatchRepository batchRepo;
 	
-	public SendBatchItemForProcessing(BatchRepository batchRepo, SupplyItem item, RuntimeManager manager){
-		this(batchRepo, false, item, manager);
+	public SubmitterSally(BatchRepository batchRepo, RuntimeManager manager, SupplyItem item){
+		this(batchRepo, false, manager, item);
 	}
 	
-	public SendBatchItemForProcessing(BatchRepository batchRepo, boolean processAuditing, SupplyItem item, RuntimeManager manager){
-		this.item = item;
+	public SubmitterSally(BatchRepository batchRepo, boolean processAuditing, RuntimeManager manager, SupplyItem... items){
+		this.items = new ArrayList<>(Arrays.asList(items));
 		this.manager = manager;
 		this.processAuditing = processAuditing;
 		this.batchRepo = batchRepo;
@@ -43,6 +46,23 @@ public class SendBatchItemForProcessing implements Callable<Long> {
 	
 	@Override
 	public Long call() throws Exception {
+		
+		//Sally submits all batches
+		//Start a batch
+		Batch b = new Batch().setBatchId(Batch.nextId()).setUserId("sally");
+		for(SupplyItem item : items){
+			
+			ProcessInstance proc = startProcess(item);
+			b.addProcessInstanceId(proc.getId());
+			
+		}
+		batchRepo.saveBatch(b);
+		
+		
+		return b.getBatchId();
+	}
+	
+	private ProcessInstance startProcess(SupplyItem item){
 		RuntimeEngine runtimeEngine = manager.getRuntimeEngine(EmptyContext.get());
 		KieSession ksession = runtimeEngine.getKieSession();
 		
@@ -51,25 +71,22 @@ public class SendBatchItemForProcessing implements Callable<Long> {
 			AuditLoggerFactory.newInstance(Type.JPA, ksession, null);
 		}
 		
-		Map<String, Object> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>(2);
 		params.put("supplyItem", item);
+		
 		ProcessInstance proc;
 		try{
 			proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
 		}catch(WorkflowRuntimeException e){
 			//Retry once. Starting a process could result in transient error when new users are added to the system.
+			////https://bugzilla.redhat.com/show_bug.cgi?id=1208056
 			proc = ksession.startProcess("com.example.bpms.simplesupplyitemapproval", params);
+		}finally{
+			manager.disposeRuntimeEngine(runtimeEngine);
 		}
-		
 		System.out.println("Started process: " + proc );
 		
-		manager.disposeRuntimeEngine(runtimeEngine);
-		
-		//Sally submits all batches
-		Batch b = new Batch().setBatchId(Batch.nextId()).setProcId(proc.getId()).setUserId("sally");
-		batchRepo.saveBatch(b);
-		
-		return b.getBatchId();
+		return proc;
 	}
 
 }
