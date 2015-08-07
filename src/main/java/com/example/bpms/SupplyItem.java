@@ -20,6 +20,7 @@ public class SupplyItem implements Serializable{
 	
 	private long id;
 	private String description;
+	private Double cost;
 	
 	public SupplyItem(){
 		this(nextId());
@@ -45,6 +46,15 @@ public class SupplyItem implements Serializable{
 		return this;
 	}
 	
+	public Double getCost() {
+		return cost;
+	}
+
+	public SupplyItem setCost(Double cost) {
+		this.cost = cost;
+		return this;
+	}
+
 	public static long nextId(){
 		return ID_GEN.getAndIncrement();
 	}
@@ -52,7 +62,7 @@ public class SupplyItem implements Serializable{
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("SupplyItem [id=").append(id).append(", description=").append(description).append("]");
+		builder.append("SupplyItem [id=").append(id).append(", description=").append(description).append(", cost=").append(cost).append("]");
 		return builder.toString();
 	}
 

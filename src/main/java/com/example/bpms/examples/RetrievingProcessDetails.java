@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.jbpm.process.audit.NodeInstanceLog;
 import org.jbpm.process.audit.ProcessInstanceLog;
 import org.kie.api.runtime.manager.RuntimeManager;
 
@@ -100,6 +101,10 @@ public class RetrievingProcessDetails {
 						+ "\n\t\t" + "Process End: " + proc.getEnd()
 						+ "\n\t\t" + "Process Status: " +  proc.getStatus()
 				);
+				List<NodeInstanceLog> nodes = auditService.findNodeInstances(procId);
+				for(NodeInstanceLog node : nodes){
+					System.out.println("Node " + node.toString() + "{{WI}} " + node.getWorkItemId());
+				}
 			}
 		}
 		

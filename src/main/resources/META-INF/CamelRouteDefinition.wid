@@ -1,0 +1,15 @@
+import org.drools.core.process.core.datatype.impl.type.StringDataType;
+import org.drools.core.process.core.datatype.impl.type.ObjectDataType;
+[
+  // the Java Node work item located in:
+  // project/src/main/resources/META-INF/CamelRouteDefinition.wid
+  [
+    "name" : "CamelRoute",
+    "parameters" : [
+      "URI"  : new StringDataType(),
+      "MessageBody" : new ObjectDataType(),
+    ],
+    "displayName" : "Camel Route",
+    "icon" : "icons/camel.gif"
+  ]
+]

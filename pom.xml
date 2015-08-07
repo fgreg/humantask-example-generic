@@ -37,13 +37,8 @@
 				<groupId>org.jboss.integration-platform</groupId>
 				<artifactId>jboss-integration-platform-bom</artifactId>
 				<type>pom</type>
-				<version>6.0.0.CR6-redhat-13</version>
+				<version>6.0.0.CR26-redhat-2</version>
 				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.kie</groupId>
-				<artifactId>kie-api</artifactId>
-				<version>6.0.3-redhat-6</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -127,6 +122,27 @@
 		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-test</artifactId>
+			<version>${jbpm.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-xstream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-stream</artifactId>
+			<version>${version.org.apache.camel}</version>
 		</dependency>
 
 	</dependencies>

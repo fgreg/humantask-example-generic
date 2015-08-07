@@ -47,7 +47,7 @@ public class SubmittingManyItems {
 		
 		
 		//Submit 10000 items for processing serially
-		for(int x = 0; x < 10000; x++){
+		for(int x = 0; x < 10; x++){
 			SupplyItem item = new SupplyItem();
 			String description = x%2==0?"Red Hat " + x:"Red Shoes " + x;
 			item.setDescription(description);

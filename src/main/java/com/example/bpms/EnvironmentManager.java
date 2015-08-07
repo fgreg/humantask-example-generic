@@ -8,8 +8,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.transaction.SystemException;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.h2.tools.Server;
-import org.jbpm.runtime.manager.impl.DefaultRegisterableItemsFactory;
 import org.jbpm.services.task.audit.lifecycle.listeners.BAMTaskEventListener;
 import org.jbpm.services.task.identity.MvelUserGroupCallbackImpl;
 import org.kie.api.io.ResourceType;
@@ -26,7 +27,9 @@ import bitronix.tm.resource.jdbc.PoolingDataSource;
 
 import com.example.bpms.audit.JPACustomAuditLogService;
 import com.example.bpms.audit.CustomAuditLogService;
-import com.example.bpms.examples.ApprovingAndRejectingTasks;
+import com.example.camel.CamelWorkItemHandler;
+import com.example.camel.NotificationRoute;
+import com.example.camel.SupplyItemRoute;
 
 /**
  * This is a utility class that keeps track of the components that will be running for each
@@ -49,6 +52,7 @@ public class EnvironmentManager {
 	private EntityManagerFactory emf;
 	private Server h2;
 	private RuntimeManager manager;
+	private CamelContext camelContext = new DefaultCamelContext();
 	private static final String PERSISTENCE_UNIT_NAME = "org.jbpm.persistence.jpa";
 
 	private EnvironmentManager() {
@@ -77,6 +81,7 @@ public class EnvironmentManager {
 	public RuntimeManager start(String... resources) {
 		setupPersistence();
 		setupManager(resources);
+		startCamel(manager);
 		return manager;
 	}
 	
@@ -89,6 +94,10 @@ public class EnvironmentManager {
 		CustomAuditLogService auditLogService = new JPACustomAuditLogService(emf);
 		((JPACustomAuditLogService) auditLogService).setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
 		return auditLogService;
+	}
+	
+	public CamelContext getCamelContext(){
+		return camelContext;
 	}
 	
 	/**
@@ -128,10 +137,21 @@ public class EnvironmentManager {
 		}
 	}
 
+	private void startCamel(RuntimeManager manager) {
+		
+		try {
+			camelContext.addRoutes(new SupplyItemRoute(manager));
+			camelContext.addRoutes(new NotificationRoute());
+			camelContext.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private PoolingDataSource setupDataSource() {
 		Properties properties = new Properties();
 		try {
-			properties.load(ApprovingAndRejectingTasks.class.getResourceAsStream("/jBPM.properties"));
+			properties.load(EnvironmentManager.class.getResourceAsStream("/jBPM.properties"));
 		} catch (Throwable t) {
 			// do nothing, use defaults
 		}
@@ -175,6 +195,14 @@ public class EnvironmentManager {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
+		
+		try {
+			if(camelContext !=null){
+				camelContext.stop();
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 
 	}
 
@@ -182,9 +210,10 @@ public class EnvironmentManager {
 
 		RuntimeEnvironmentBuilder builder = RuntimeEnvironmentBuilder.Factory.get().newDefaultBuilder();
 
-		//Turn on task listener
-		DefaultRegisterableItemsFactory registerableItemsFactory = new DefaultRegisterableItemsFactory();
+		//Turn on task listener and register custom work item handlers
+		CamelAwareRegisterableItemsFactory registerableItemsFactory = new CamelAwareRegisterableItemsFactory(camelContext);
 	    registerableItemsFactory.addTaskListener(BAMTaskEventListener.class);
+	    registerableItemsFactory.addWorkItemHandler("CamelRoute", CamelWorkItemHandler.class);
 
 		builder.persistence(true)
 			.entityManagerFactory(emf)
